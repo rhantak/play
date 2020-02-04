@@ -22,8 +22,8 @@ describe('Test the favorites route', () => {
       }
 
       const res = await request(app)
-      .post("/api/v1/favorites")
-      .send(newFav);
+        .post("/api/v1/favorites")
+        .send(newFav);
 
       expect(res.statusCode).toBe(201);
       expect(res.body).toHaveProperty("title", "We Will Rock You");
@@ -45,8 +45,8 @@ describe('Test the favorites route', () => {
       expect(old_favorites.length).toBe(0)
 
       const res = await request(app)
-      .post("/api/v1/favorites")
-      .send(newFav);
+        .post("/api/v1/favorites")
+        .send(newFav);
 
       let new_favorites = await database('favorites').select()
         .then(result => {
@@ -61,8 +61,8 @@ describe('Test the favorites route', () => {
       }
 
       const res = await request(app)
-      .post("/api/v1/favorites")
-      .send(newFav);
+        .post("/api/v1/favorites")
+        .send(newFav);
 
       expect(res.statusCode).toBe(422);
       expect(res.body).toHaveProperty("error", "Expected format: { title: <string>, artistName: <string> }. You are missing a artistName property.");
@@ -75,12 +75,34 @@ describe('Test the favorites route', () => {
       }
 
       const res = await request(app)
-      .post("/api/v1/favorites")
-      .send(newFav);
+        .post("/api/v1/favorites")
+        .send(newFav);
 
       expect(res.statusCode).toBe(400);
       expect(res.body).toHaveProperty("error", "Unable to create favorite.");
       expect(res.body).toHaveProperty("detail", "No tracks were found from your search.");
     })
+
+    test('It changes blank genre to unknown', async() =>{
+      let newFav = {
+        title: "Superman (radio remix)",
+        artistName: "LINKIN PARK"
+      }
+
+      const res = await request(app)
+        .post("/api/v1/favorites")
+        .send(newFav);
+
+      expect(res.statusCode).toBe(201);
+      expect(res.body).toHaveProperty("title", "Superman (radio remix)");
+      expect(res.body).toHaveProperty("artistName", "LINKIN PARK");
+      expect(res.body).toHaveProperty("genre", "Unknown");
+      expect(res.body).toHaveProperty("rating", 1);
+
+    })
+    // 
+    // test('It changes a blank rating to null', aync() => {
+    //
+    // })
   })
 });
