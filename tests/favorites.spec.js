@@ -6,9 +6,11 @@ const environment = process.env.NODE_ENV || 'test';
 const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
+
 describe('Test the favorites route', () => {
   beforeEach(async () => {
     await database.raw('truncate table favorites cascade');
+    fetch.resetMocks();
   });
   afterEach(() => {
     database.raw('truncate table favorites cascade');
@@ -20,6 +22,32 @@ describe('Test the favorites route', () => {
         title: "We will Rock You",
         artistName: 'Queen'
       }
+      // set a mock object and stub the fetch call to return a custom object
+      // so your fetch call always returns exactly what you want it to return
+      await fetch.mockResponseOnce(
+        JSON.stringify({
+          message: {
+            body: {
+              track_list: [
+                {
+                  track: {
+                    artist_name: "Queen",
+                    track_name: "We Will Rock You",
+                    track_rating: 87,
+                    primary_genres: {
+                      music_genre_list: [{
+                        music_genre: {
+                          music_genre_name: "Rock"
+                        }
+                      }]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        })
+      );
 
       const res = await request(app)
         .post("/api/v1/favorites")
@@ -44,6 +72,32 @@ describe('Test the favorites route', () => {
         })
       expect(old_favorites.length).toBe(0)
 
+      // set a mock object and stub the fetch call to return a custom object
+      // so your fetch call always returns exactly what you want it to return
+      await fetch.mockResponseOnce(
+        JSON.stringify({
+          message: {
+            body: {
+              track_list: [
+                {
+                  track: {
+                    artist_name: "Queen",
+                    track_name: "We Will Rock You",
+                    track_rating: 87,
+                    primary_genres: {
+                      music_genre_list: [{
+                        music_genre: {
+                          music_genre_name: "Awesome Rock"
+                        }
+                      }]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        })
+      );
       const res = await request(app)
         .post("/api/v1/favorites")
         .send(newFav);
@@ -53,6 +107,7 @@ describe('Test the favorites route', () => {
           return result;
         })
       expect(new_favorites.length).toBe(1)
+      expect(new_favorites[0].genre).toBe("Awesome Rock")
     })
 
     test('It sends an error message for missing parameters', async() => {
@@ -74,6 +129,23 @@ describe('Test the favorites route', () => {
         artistName: "asdf"
       }
 
+      await fetch.mockResponseOnce(
+        JSON.stringify(
+          {
+            message: {
+                header: {
+                    status_code: 200,
+                    execute_time: 0.014652013778687,
+                    available: 0
+                },
+                body: {
+                    track_list: []
+                }
+            }
+          }
+        )
+      )
+
       const res = await request(app)
         .post("/api/v1/favorites")
         .send(newFav);
@@ -88,6 +160,25 @@ describe('Test the favorites route', () => {
         title: "Superman (radio remix)",
         artistName: "LINKIN PARK"
       }
+
+      await fetch.mockResponseOnce(
+        JSON.stringify({
+          message: {
+            body: {
+              track_list: [{
+                track: {
+                  track_name: "Superman (radio remix)",
+                  artist_name: "LINKIN PARK",
+                  track_rating: 1,
+                  primary_genres: {
+                    music_genre_list: []
+                  }
+                }
+              }]
+            }
+          }
+        })
+      )
 
       const res = await request(app)
         .post("/api/v1/favorites")
