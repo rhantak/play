@@ -191,9 +191,41 @@ describe('Test the favorites route', () => {
       expect(res.body).toHaveProperty("rating", 1);
 
     })
-    // 
-    // test('It changes a blank rating to null', aync() => {
-    //
-    // })
+
+    test('It changes a blank rating to null', async() => {
+      let newFav = {
+        title: "Superman (radio remix)",
+        artistName: "LINKIN PARK"
+      }
+
+      await fetch.mockResponseOnce(
+        JSON.stringify({
+          message: {
+            body: {
+              track_list: [{
+                track: {
+                  track_name: "Superman (radio remix)",
+                  artist_name: "LINKIN PARK",
+                  primary_genres: {
+                    music_genre_list: []
+                  }
+                }
+              }]
+            }
+          }
+        })
+      )
+
+      const res = await request(app)
+        .post("/api/v1/favorites")
+        .send(newFav);
+
+      expect(res.statusCode).toBe(201);
+      expect(res.body).toHaveProperty("title", "Superman (radio remix)");
+      expect(res.body).toHaveProperty("artistName", "LINKIN PARK");
+      expect(res.body).toHaveProperty("genre", "Unknown");
+      expect(res.body).toHaveProperty("rating", null);
+
+    })
   })
 });
