@@ -55,7 +55,7 @@ Creates a favorite in the database.
 
 Required body of request:
 - JSON format
-- `{ "title": <string>, "artistName": <string }`
+- `title` and `artistName` attributes required
 
 Example request:
 ```
