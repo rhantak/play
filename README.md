@@ -50,6 +50,23 @@ Example success response:
 }
 ```
 
+##### GET `/favorites/:id`
+Selects and returns a favorite by id from the database. `id` is a positive integer
+
+Example request: GET `/api/v1/favorites/1`
+
+Example success response:
+```
+status: 200
+body:
+  {
+    "id": 1,
+    "title": "We Will Rock You",
+    "artistName": "Queen"
+    "genre": "Rock",
+    "rating": 88
+  }
+
 ##### POST `/favorites`
 Creates a favorite in the database.
 
