@@ -40,13 +40,33 @@ describe('Test the favorite by id route', () => {
       let favOne = await database('favorites').select('id').first()
 
       const res = await request(app)
-        .get(`/api/v1/favorites/${favOne}`);
+        .get(`/api/v1/favorites/${favOne.id}`);
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty("title", "Hound Dog");
       expect(res.body).toHaveProperty("artistName", "Elvis Presley");
       expect(res.body).toHaveProperty("genre", "Rock");
       expect(res.body).toHaveProperty("rating", 47);
+    })
+
+    test('It should return a 404 if id not in favorites table', async() => {
+      let notAFav = -1
+
+      const res = await request(app)
+        .get(`/api/v1/favorites/${notAFav}`);
+
+      expect(res.statusCode).toBe(404);
+      expect(res.body).toHaveProperty("error", "No such favorite found");
+    })
+
+    test('It should return a 500 if other error comes up', async() => {
+      let errorFav = 'abc'
+
+      const res = await request(app)
+        .get(`/api/v1/favorites/${errorFav}`);
+
+      expect(res.statusCode).toBe(500);
+      expect(res.body).toHaveProperty("error");
     })
   })
 });
