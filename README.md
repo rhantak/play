@@ -1,7 +1,7 @@
 # [Play](https://play-rhap.herokuapp.com/)
 
 ### Introduction
-Website: [https://play-rhap.herokuapp.com/](https://play-rhap.herokuapp.com/)
+Website: [https://play-rhap.herokuapp.com/](https://play-rhap.herokuapp.com/)  
 Agile Project Board: https://github.com/rhantak/play/projects/1
 
 Play is an API that allows users to search for songs and add them to a list of favorites. Once added, favorites are searchable by ID or as a list of all favorites.
