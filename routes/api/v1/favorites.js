@@ -49,6 +49,15 @@ router.post('/', (request, response) => {
     .catch((error) => response.status(500).json({error: error}))
 });
 
+router.get('/', (request, response) => {
+  database('favorites')
+    .select('id', 'title', 'artistName', 'genre', 'rating')
+    .then(result => {
+      response.status(200).send({data: result})
+    })
+    .catch((error) => response.status(500).json({ error: error }))
+})
+
 router.get('/:id', (request, response) =>{
   database('favorites')
     .where(request.params)
