@@ -49,6 +49,34 @@ Example success response:
   ]
 }
 ```
+
+##### POST `/favorites`
+Creates a favorite in the database.
+
+Required body of request:
+- JSON format
+- `title` and `artistName` attributes required
+
+Example request:
+```
+POST  /api/v1/favorites
+body:
+{ title: "We Will Rock You", artistName: "Queen" }
+```
+
+Example success response:
+```
+status 201
+body:
+{
+  "id": 1,
+  "title": "We Will Rock You",
+  "artistName": "Queen"
+  "genre": "Rock",
+  "rating": 88
+}
+```
+
 ### Schema Design
 
 <img width="189" alt="Screen Shot 2020-02-04 at 5 25 04 PM" src="https://user-images.githubusercontent.com/47759923/73799595-9a137900-4773-11ea-98e9-376aefb898a7.png">
