@@ -60,6 +60,7 @@ Required body of request:
 Example request:
 ```
 POST  /api/v1/favorites
+body:
 { title: "We Will Rock You", artistName: "Queen" }
 ```
 
