@@ -38,12 +38,21 @@ router.post('/', (request, response) => {
         })
       } else {
         let newFavorite = new Favorite(data[0].track)
-
-        database('favorites')
-          .insert(newFavorite, ["id", "title", "artistName", "genre", "rating"])
-            .then(favoriteInfo =>{
-              response.status(201).send(favoriteInfo[0])
-            })
+        database('favorites').where({'title': newFavorite.title, 'artistName': newFavorite.artistName}).select()
+          .then(faves => {
+            if (!faves.length) {
+              database('favorites')
+              .insert(newFavorite, ["id", "title", "artistName", "genre", "rating"])
+              .then(favoriteInfo =>{
+                response.status(201).send(favoriteInfo[0])
+              })
+            } else {
+              response.status(409).json({
+                "error": "Unable to create favorite.",
+                "detail": "That song is already favorited."
+              })
+            }
+          })
       }
     })
     .catch((error) => response.status(500).json({error: error}))

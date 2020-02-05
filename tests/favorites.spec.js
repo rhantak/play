@@ -227,5 +227,83 @@ describe('Test the favorites route', () => {
       expect(res.body).toHaveProperty("rating", null);
 
     })
+
+    test('It will not add duplicate favorites', async() => {
+      let newFav = {
+        title: "We will Rock You",
+        artistName: 'Queen'
+      }
+      // set a mock object and stub the fetch call to return a custom object
+      // so your fetch call always returns exactly what you want it to return
+      await fetch.mockResponseOnce(
+        JSON.stringify({
+          message: {
+            body: {
+              track_list: [
+                {
+                  track: {
+                    artist_name: "Queen",
+                    track_name: "We Will Rock You",
+                    track_rating: 87,
+                    primary_genres: {
+                      music_genre_list: [{
+                        music_genre: {
+                          music_genre_name: "Rock"
+                        }
+                      }]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        })
+      );
+
+      const res_1 = await request(app)
+        .post("/api/v1/favorites")
+        .send(newFav);
+
+      await fetch.mockResponseOnce(
+        JSON.stringify({
+          message: {
+            body: {
+              track_list: [
+                {
+                  track: {
+                    artist_name: "Queen",
+                    track_name: "We Will Rock You",
+                    track_rating: 87,
+                    primary_genres: {
+                      music_genre_list: [{
+                        music_genre: {
+                          music_genre_name: "Rock"
+                        }
+                      }]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        })
+      );
+
+      const res_2 = await request(app)
+        .post("/api/v1/favorites")
+        .send(newFav);
+
+      let db_favorites = await database('favorites').select()
+        .then(result => {
+          return result;
+        })
+      expect(db_favorites.length).toBe(1)
+      expect(db_favorites[0].genre).toBe("Rock")
+
+      expect(res_1.status).toBe(201)
+      expect(res_2.status).toBe(409)
+      expect(res_2.body).toHaveProperty("error", "Unable to create favorite.")
+      expect(res_2.body).toHaveProperty("detail", "That song is already favorited.")
+    })
   })
 });
