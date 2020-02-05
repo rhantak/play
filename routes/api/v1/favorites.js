@@ -49,4 +49,18 @@ router.post('/', (request, response) => {
     .catch((error) => response.status(500).json({error: error}))
 });
 
+router.get('/:id', (request, response) =>{
+  database('favorites')
+    .where(request.params)
+    .select('id', 'title', 'artistName', 'genre', 'rating')
+    .then(favorites => {
+      if(favorites.length > 0 ){
+        return response.status(200).send(favorites[0]);
+      } else {
+        return response.status(404).json({error: "No such favorite found"})
+      }
+    })
+    .catch((error) => response.status(500).json({error: error}))
+});
+
 module.exports = router;
