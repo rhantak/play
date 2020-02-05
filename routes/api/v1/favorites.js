@@ -55,6 +55,7 @@ router.get('/', (request, response) => {
     .then(result => {
       response.status(200).send({data: result})
     })
+    .catch((error) => response.status(500).json({ error: error }))
 })
 
 module.exports = router;
