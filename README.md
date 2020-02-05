@@ -66,6 +66,7 @@ body:
     "genre": "Rock",
     "rating": 88
   }
+```
 
 ##### POST `/favorites`
 Creates a favorite in the database.
