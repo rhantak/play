@@ -235,7 +235,7 @@ describe('Test the favorites route', () => {
       }
       // set a mock object and stub the fetch call to return a custom object
       // so your fetch call always returns exactly what you want it to return
-      await fetch.mockResponseOnce(
+      await fetch.mockResponse(
         JSON.stringify({
           message: {
             body: {
@@ -263,31 +263,6 @@ describe('Test the favorites route', () => {
       const res_1 = await request(app)
         .post("/api/v1/favorites")
         .send(newFav);
-
-      await fetch.mockResponseOnce(
-        JSON.stringify({
-          message: {
-            body: {
-              track_list: [
-                {
-                  track: {
-                    artist_name: "Queen",
-                    track_name: "We Will Rock You",
-                    track_rating: 87,
-                    primary_genres: {
-                      music_genre_list: [{
-                        music_genre: {
-                          music_genre_name: "Rock"
-                        }
-                      }]
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        })
-      );
 
       const res_2 = await request(app)
         .post("/api/v1/favorites")
