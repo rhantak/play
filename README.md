@@ -27,7 +27,7 @@ The test suite can be run with the following command: `npm test`
 ##### GET `/favorites`
 Sends a list of all favorites in the database.
 
-Example request: GET `/api/v1/favorites` (no params or body required)
+Example request: `GET /api/v1/favorites` (no params or body required)
 
 Example success response:
 ```
@@ -54,7 +54,7 @@ Example success response:
 ##### GET `/favorites/:id`
 Selects and returns a favorite by id from the database. `id` is a positive integer
 
-Example request: GET `/api/v1/favorites/1`
+Example request: `GET /api/v1/favorites/1`
 
 Example success response:
 ```
@@ -94,6 +94,16 @@ body:
   "genre": "Rock",
   "rating": 88
 }
+```
+
+##### DELETE `/favorites/:id`
+Deletes a favorite by id from the database. `:id` must be a positive integer.
+
+Example request: `DELETE /api/v1/favorites/1`
+
+Example success response:
+```
+status: 204
 ```
 
 ### Schema Design
