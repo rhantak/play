@@ -1,74 +1,66 @@
-# All your Express base are belong to us
+# [Play](https://play-rhap.herokuapp.com/)
 
-[![Build Status](https://travis-ci.com/turingschool-examples/all-your-base.svg?branch=master)](https://travis-ci.com/turingschool-examples/all-your-base)
+### Introduction
+Website: [https://play-rhap.herokuapp.com/](https://play-rhap.herokuapp.com/)
 
-## Getting started
-To use this repo, you’ll need to `fork` the repo as your own. Once you have done that, you’ll need to run the following command below to get everything up and running. 
+Play is an API that allows users to search for songs and add them to a list of favorites. Once added, favorites are searchable by ID or as a list of all favorites.
 
-#### Installing necessary dependencies
-The easiest way to get started is to run the following command. This will pull down any necessary dependencies that your app will require. You can think of this command as something incredibly similar to `bundle install` in Rails. 
-
-`npm install`
-
-#### Set up your local database
-You’ll need to figure out a name for your database. We suggest calling it something like `sweater_weather_dev`.  
-
-To get things set up, you’ll need to access your Postgres instance by typing in `psql` into your terminal. Once there, you can create your database by running the comment `CREATE DATABASE PUT_DATABASE_NAME_HERE_dev;`. 
-
-Now you have a database for your new project.
-
-#### Migrations
-Once you have your database setup, you’ll need to run some migrations (if you have any). You can do this by running the following command: 
-
-`knex migrate:latest`
-
-
-Instructions to create database, run migrations, and seed: 
+### Initial Setup
+- Clone down this repo and `cd` into its main directory
+- Run `npm install` to install all dependencies
+- Create databases for development and testing by running the following commands:
 ```
 psql
-CREATE DATABASE DATABASE_NAME_dev;
+CREATE DATABASE play_dev
+CREATE DATABASE play_test
 \q
-
-knex migrate:latest
-knex seed:run
 ```
+- Run `knex migrate:latest` to set up your development database
+- Run `knex migrate:latest --env test` before running any tests to set up the test database
 
-#### Set up your test database
-Most of the setup is going to be same as the one you did before. You’ll notice one small difference with setting the environment flag to `test`.  
+### How To Run Tests
+The test suite can be run with the following command: `npm test`
 
+### How To Use
+- All request URLs should begin with `https://play-rhap.herokuapp.com/api/v1`
+##### GET `/favorites`
+Sends a list of all favorites in the database.
+
+Example request: GET `/api/v1/favorites` (no params or body required)
+
+Example success response:
 ```
-psql
-CREATE DATABASE DATABASE_NAME_test;
-\q
-
-knex migrate:latest --env test
+{ data:
+  [
+    {
+      "id": 1,
+      "title": "We Will Rock You",
+      "artistName": "Queen"
+      "genre": "Rock",
+      "rating": 88
+    },
+    {
+      "id": 2,
+      "title": "Careless Whisper",
+      "artistName": "George Michael"
+      "genre": "Pop",
+      "rating": 93
+    },
+  ]
+}
 ```
+### Schema Design
 
-## Running your tests
-Running tests are simple and require you to run the following command below: 
+<img width="189" alt="Screen Shot 2020-02-04 at 5 25 04 PM" src="https://user-images.githubusercontent.com/47759923/73799595-9a137900-4773-11ea-98e9-376aefb898a7.png">
 
-`npm test`
+### Tech Stack List
+- PostgreSQL (database)
+- Node.JS (Main language)
+- Express (Backend framework)
+- Knex (ORM)
+- Jest (Testing)
+- jest-fetch-mock (Mocking API responses in tests)
 
-When the tests have completed, you’ll get a read out of how things panned out. The tests will be a bit more noisy than what you’re used to, so be prepared. 
-
-## Setting up your production environment
-This repo comes with a lot of things prepared for you. This includes production ready configuration. To get started, you’ll need to do a few things. 
-
-- Start a brand new app on the Heroku dashboard 
-- Add a Postgres instance to your new Heroku app
-- Find the URL of that same Postgres instance and copy it. It should look like a long url. It may look something like like `postgres://sdflkjsdflksdf:9d3367042c8739f3...`.
-- Update your `knexfile.js` file to use your Heroku database instance. You’ll see a key of `connection` with a value of an empty string. This is where you’ll paste your new Postgres instance URL. 
-
-Once you’ve set all of that up, you’ll need to `add the remote` to your new app. This should work no differently than how you’ve done it with any Rails project. Adding this remote will allow you to run `git push heroku master`. 
-
-Once you’ve done that, you’ll need to `bash` into your Heroku instance and get some things set up. 
-
-- Run the following commands to get started:
-```
-heroku run bash
-npm install
-nom install -g knex
-knex migrate:latest
-```
-
-This will install any dependencies, install Knex, and migrate any changes that you’ve made to the database. 
+### Core Contributors
+- [Alice Post](https://github.com/ap2322)
+- [Ryan Hantak](https://github.com/rhantak)
