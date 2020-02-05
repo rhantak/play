@@ -81,4 +81,18 @@ router.get('/:id', (request, response) =>{
     .catch((error) => response.status(500).json({error: error}))
 });
 
+router.delete('/:id', (request, response) => {
+  database('favorites')
+    .where(request.params)
+    .del()
+    .then(result => {
+      if(result === 1){
+        response.status(204).send()
+      } else if (result === 0) {
+        response.status(404).json({error: "No such favorite found. No deletion made."})
+      }
+    })
+    .catch((error) => response.status(500).json({ error: error }))
+})
+
 module.exports = router;
