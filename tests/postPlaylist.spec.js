@@ -1,9 +1,9 @@
 var shell = require('shelljs');
 var request = require("supertest");
-var app = require('../../app');
+var app = require('../app');
 
 const environment = process.env.NODE_ENV || 'test';
-const configuration = require('../../knexfile')[environment];
+const configuration = require('../knexfile')[environment];
 const database = require('knex')(configuration);
 
 
@@ -28,6 +28,8 @@ describe('Test the playlists route', () => {
 
       expect(res.statusCode).toBe(201);
       expect(res.body).toHaveProperty("title", "A Knight's Tale Soundtrack");
+      expect(res.body).toHaveProperty("createdAt");
+      expect(res.body).toHaveProperty("updatedAt");
 
       playlist = await database('playlists').where({title: "A Knight's Tale Soundtrack"}).select()
       expect(playlist.length).toBe(1)
@@ -58,9 +60,8 @@ describe('Test the playlists route', () => {
         .post("/api/v1/playlists")
         .send(newPlaylist);
 
-      expect(res.statusCode).toBe(400);
-      expect(res.body).toHaveProperty("error", "Unable to create playlist.");
-      expect(res.body).toHaveProperty("detail", "Expected format");
+      expect(res.statusCode).toBe(422);
+      expect(res.body).toHaveProperty("error", "Expected format { title: <string> }. You are missing a title property.");
     });
   });
 });
