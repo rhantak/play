@@ -106,6 +106,26 @@ Example success response:
 status: 204
 ```
 
+##### POST `/playlists`
+Creates a playlist in the database.
+
+Required body of request:
+- JSON format
+- `title` attribute required
+
+Example success response:
+```
+status: 201
+
+body: 
+{
+  "id": 1,
+  "title": "Cleaning House",
+  "createdAt": 2019-11-26T16:03:43+00:00,
+  "updatedAt": 2019-11-26T16:03:43+00:00,
+}
+```
+
 ### Schema Design
 
 <img width="189" alt="Screen Shot 2020-02-04 at 5 25 04 PM" src="https://user-images.githubusercontent.com/47759923/73799595-9a137900-4773-11ea-98e9-376aefb898a7.png">
