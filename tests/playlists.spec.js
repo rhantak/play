@@ -45,5 +45,13 @@ describe('Test the playlists route', () => {
       expect(res.body.data[1]).toHaveProperty("updatedAt");
 
     });
+
+    test("It should respond with an empty array when no playlists present", async() => {
+      const res = await request(app)
+        .get("/api/v1/playlists")
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toHaveProperty("data", []);
+    });
   })
 });
