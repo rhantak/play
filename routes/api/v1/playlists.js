@@ -12,7 +12,10 @@ router.get('/', (request, response) => {
     .then(result => {
       response.status(200).send({data: result})
     })
-    .catch((error) => response.status(500).json({ error: error }))
+    .catch(error => {
+      console.log(error)
+      response.status(500).json({ error: "Oops, something went wrong!" });
+    })
 })
 
 module.exports = router;
