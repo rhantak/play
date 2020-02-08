@@ -106,6 +106,31 @@ Example success response:
 status: 204
 ```
 
+##### GET `/playlists`
+Sends a list of all favorites in the database.
+
+Example request: `GET /api/v1/playlists` (no params or body required)
+
+Example success response:
+```
+{
+  data: [
+    {
+      "id": 1,
+      "title": "Cleaning House",
+      "createdAt": 2019-11-26T16:03:43+00:00,
+      "updatedAt": 2019-11-26T16:03:43+00:00
+    },
+    {
+      "id": 2,
+      "title": "Running Mix",
+      "createdAt": 2019-11-26T16:03:43+00:00,
+      "updatedAt": 2019-11-26T16:03:43+00:00
+    },
+  ]
+}
+```
+
 ##### POST `/playlists`
 Creates a playlist in the database.
 
