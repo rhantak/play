@@ -48,6 +48,7 @@ router.post('/', (request, response) => {
 router.put('/:id', (request, response) => {
   const info = request.body;
   const id = request.params;
+
   for (let requiredParameter of ["title"]) {
     if(!info[requiredParameter]) {
       response
@@ -56,15 +57,25 @@ router.put('/:id', (request, response) => {
     }
   }
 
-  database('playlists')
-    .where(id)
-    .update(info, ["id", "title", "created_at as createdAt", "updated_at as updatedAt"])
-    .then(updated => {
-      console.log("made it to updated")
-      response.status(200).send(updated[0]);
+  database('playlists').where(info).select()
+    .then(repeat => {
+      if(repeat.length) {
+        response.status(400).send({
+          "error": "Unable to create playlist.",
+          "detail": "A playlist with that title already exists."
+        })
+      } else {
+        database('playlists')
+        .where(id)
+        .update(info, ["id", "title", "created_at as createdAt", "updated_at as updatedAt"])
+        .then(updated => {
+          response.status(200).send(updated[0])
+        })
+      }
     })
     .catch(error => {
-      response.send(error)
+      console.log(error)
+      response.status(500).json({ error: "Oops, something went wrong!" });
     })
 })
 
