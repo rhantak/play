@@ -55,14 +55,12 @@ router.put('/:id', (request, response) => {
         .send({ "error": `Expected format { title: <string> }. You are missing a ${requiredParameter} property.`})
     }
   }
-  // check for duplication with another playlist
-  // update playlist in db with id params.id
-  // catch 500 error
 
   database('playlists')
     .where(id)
     .update(info, ["id", "title", "created_at as createdAt", "updated_at as updatedAt"])
     .then(updated => {
+      console.log("made it to updated")
       response.status(200).send(updated[0]);
     })
     .catch(error => {
