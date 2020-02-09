@@ -75,7 +75,7 @@ describe('Test the playlists route', () => {
       // when given a title that already exists in the db it  does not do the update
       expect(playlists).toStrictEqual(playlists_1)
 
-      expect(res.body).toHaveProperty("error", "Unable to create playlist.");
+      expect(res.body).toHaveProperty("error", "Unable to update playlist.");
       expect(res.body).toHaveProperty("detail", "A playlist with that title already exists.");
     });
 
@@ -94,5 +94,20 @@ describe('Test the playlists route', () => {
       expect(res.statusCode).toBe(422);
       expect(res.body).toHaveProperty("error", "Expected format { title: <string> }. You are missing a title property.");
     });
+
+    test('It sends an error for missing id', async () => {
+      let updatedPlaylist = {
+        title: "Keep Walking"
+      }
+
+      const res = await request(app)
+        .put("/api/v1/playlists/0")
+        .send(updatedPlaylist);
+        
+      expect(res.statusCode).toBe(404)
+      expect(res.body).toHaveProperty("error", "Unable to update playlist.");
+      expect(res.body).toHaveProperty("detail", "A playlist with that id cannot be found");
+    })
+
   });
 });
