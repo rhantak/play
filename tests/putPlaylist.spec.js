@@ -66,15 +66,15 @@ describe('Test the playlists route', () => {
       let updatedPlaylist = {
         title: "Keep Walking"
       }
-      console.log('playlists', playlists_1)
-      console.log(rockOUT)
+
       const res = await request(app)
         .put(`/api/v1/playlists/${rockOUT.id}`)
         .send(updatedPlaylist);
 
       let playlists = await database('playlists').select()
-      console.log(playlists)
-      expect(playlists.length).toBe(2)
+
+      // when given a title that already exists in the db, no catch is thrown, it simply does not do the update
+      expect(playlists).toStrictEqual(playlists_1)
     });
 
     test('It sends an error for missing parameters', async () => {
