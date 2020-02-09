@@ -56,7 +56,7 @@ describe('Test the playlists route', () => {
       expect(findRockIN.length).toBe(1)
     });
 
-    test.only('It will only update a unique playlist title', async () => {
+    test('It will only update a unique playlist title', async () => {
       let playlists_1 = await database('playlists').select()
       let rockOUT = await database('playlists')
                             .where({title: 'Rock OUT'})
@@ -72,17 +72,24 @@ describe('Test the playlists route', () => {
         .send(updatedPlaylist);
 
       let playlists = await database('playlists').select()
-
-      // when given a title that already exists in the db, no catch is thrown, it simply does not do the update
+      // when given a title that already exists in the db it  does not do the update
       expect(playlists).toStrictEqual(playlists_1)
+
+      expect(res.body).toHaveProperty("error", "Unable to create playlist.");
+      expect(res.body).toHaveProperty("detail", "A playlist with that title already exists.");
     });
 
     test('It sends an error for missing parameters', async () => {
-      let newPlaylist = {}
+      let rockOUT = await database('playlists')
+                            .where({title: 'Rock OUT'})
+                            .select()
+                            .first()
+
+      let updatedPlaylist = {}
 
       const res = await request(app)
-        .post("/api/v1/playlists")
-        .send(newPlaylist);
+        .put(`/api/v1/playlists/${rockOUT.id}`)
+        .send(updatedPlaylist);
 
       expect(res.statusCode).toBe(422);
       expect(res.body).toHaveProperty("error", "Expected format { title: <string> }. You are missing a title property.");
