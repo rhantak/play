@@ -92,8 +92,20 @@ database('playlists')
     console.log(error)
     return response.status(500).json({ error: "Oops, something went wrong!" });
   })
+})
 
-
+router.delete('/:id', (request, response) => {
+  database('playlists')
+    .where(request.params)
+    .del()
+    .then(result => {
+      if(result === 1){
+        response.status(204).send()
+      } else if (result === 0) {
+        response.status(404).json({error: "No such playlist found. No deletion made."})
+      }
+    })
+    .catch((error) => response.status(500).json({ error: error }))
 })
 
 module.exports = router;
