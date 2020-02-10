@@ -21,7 +21,7 @@ router.post('/', (request, response) => {
 
   for (let requiredParameter of ["title"]) {
     if(!info[requiredParameter]) {
-      response
+      return response
         .status(422)
         .send({ "error": `Expected format { title: <string> }. You are missing a ${requiredParameter} property.`})
     }
@@ -30,7 +30,7 @@ router.post('/', (request, response) => {
   database('playlists').where(info).select()
     .then(repeat => {
       if(repeat.length) {
-        response.status(400).send({
+        return response.status(400).send({
           "error": "Unable to create playlist.",
           "detail": "A playlist with that title already exists."
         })
@@ -38,7 +38,7 @@ router.post('/', (request, response) => {
         database('playlists')
         .insert(info, ["id", "title", "created_at as createdAt", "updated_at as updatedAt"])
         .then(playlistInfo => {
-          response.status(201).send(playlistInfo[0])
+          return response.status(201).send(playlistInfo[0])
         })
       }
     })
@@ -51,7 +51,7 @@ router.put('/:id', (request, response) => {
 // check parameters of body
   for (let requiredParameter of ["title"]) {
     if(!info[requiredParameter]) {
-      response
+      return response
         .status(422)
         .send({ "error": `Expected format { title: <string> }. You are missing a ${requiredParameter} property.`})
     }
@@ -62,8 +62,25 @@ database('playlists')
   .where(id)
   .select()
   .then(results => {
-    if(results.length > 0){
-      return true
+    if(results.length > 0 && info.title){
+      // check uniqueness of title
+      database('playlists').where(info).select()
+      .then(repeat => {
+        if(repeat.length) {
+          return response.status(400).send({
+            "error": "Unable to update playlist.",
+            "detail": "A playlist with that title already exists."
+          })
+        } else {
+          // update db
+          database('playlists')
+          .where(id)
+          .update(info, ["id", "title", "created_at as createdAt", "updated_at as updatedAt"])
+          .then(updated => {
+            return response.status(200).send(updated[0])
+          })
+        }
+      })
     } else {
       return response.status(404).send({
         "error": "Unable to update playlist.",
@@ -73,32 +90,10 @@ database('playlists')
   })
   .catch(error => {
     console.log(error)
-    response.status(500).json({ error: "Oops, something went wrong!" });
+    return response.status(500).json({ error: "Oops, something went wrong!" });
   })
 
 
-// check uniqueness of title
-  database('playlists').where(info).select()
-    .then(repeat => {
-      if(repeat.length) {
-        response.status(400).send({
-          "error": "Unable to update playlist.",
-          "detail": "A playlist with that title already exists."
-        })
-      } else {
-        // update db
-        database('playlists')
-          .where(id)
-          .update(info, ["id", "title", "created_at as createdAt", "updated_at as updatedAt"])
-          .then(updated => {
-            response.status(200).send(updated[0])
-          })
-        }
-      })
-    .catch(error => {
-      console.log(error)
-      response.status(500).json({ error: "Oops, something went wrong!" });
-    })
 })
 
 module.exports = router;
