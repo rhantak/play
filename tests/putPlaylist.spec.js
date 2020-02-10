@@ -101,7 +101,7 @@ describe('Test the playlists route', () => {
       }
 
       const res = await request(app)
-        .put("/api/v1/playlists/9999")
+        .put("/api/v1/playlists/0")
         .send(updatedPlaylist);
 
       expect(res.statusCode).toBe(404)
