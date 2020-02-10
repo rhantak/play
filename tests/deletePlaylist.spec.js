@@ -40,7 +40,7 @@ describe('Test the delete playlist by id route', () => {
       expect(playlistNotFound.length).toBe(0)
     })
 
-    test('It should send a 404 if no favorite found', async() => {
+    test('It should send a 404 if no playlist found', async() => {
       let playlistCount = await database('playlists').select()
         .then((playlists) => playlists.length)
 
