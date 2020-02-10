@@ -45,4 +45,60 @@ router.post('/', (request, response) => {
     .catch(500)
 })
 
+router.put('/:id', (request, response) => {
+  const info = request.body;
+  const id = request.params;
+// check parameters of body
+  for (let requiredParameter of ["title"]) {
+    if(!info[requiredParameter]) {
+      response
+        .status(422)
+        .send({ "error": `Expected format { title: <string> }. You are missing a ${requiredParameter} property.`})
+    }
+  }
+
+// check id is in db
+database('playlists')
+  .where(id)
+  .select()
+  .then(results => {
+    if(results.length > 0){
+      return true
+    } else {
+      return response.status(404).send({
+        "error": "Unable to update playlist.",
+        "detail": "A playlist with that id cannot be found"
+      })
+    }
+  })
+  .catch(error => {
+    console.log(error)
+    response.status(500).json({ error: "Oops, something went wrong!" });
+  })
+
+
+// check uniqueness of title
+  database('playlists').where(info).select()
+    .then(repeat => {
+      if(repeat.length) {
+        response.status(400).send({
+          "error": "Unable to update playlist.",
+          "detail": "A playlist with that title already exists."
+        })
+      } else {
+        // update db
+        database('playlists')
+          .where(id)
+          .update(info, ["id", "title", "created_at as createdAt", "updated_at as updatedAt"])
+          .then(updated => {
+            response.status(200).send(updated[0])
+          })
+        }
+      })
+    .catch(error => {
+      console.log(error)
+      response.status(500).json({ error: "Oops, something went wrong!" });
+    })
+})
+
 module.exports = router;
