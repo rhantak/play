@@ -181,6 +181,16 @@ body:
 }
 ```
 
+##### DELETE `/playlists/:id`
+Deletes a playlist by id from the database. `:id` must be a positive integer.
+
+Example request: `DELETE /api/v1/playlists/1`
+
+Example success response:
+```
+status: 204
+```
+
 
 ### Schema Design
 
