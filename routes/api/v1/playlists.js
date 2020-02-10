@@ -59,7 +59,7 @@ router.put('/:id', (request, response) => {
 
 // check id is in db
 database('playlists')
-  .where(id)
+  .where({id: id.id})
   .select()
   .then(results => {
     if(results.length > 0){
