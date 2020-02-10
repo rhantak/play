@@ -101,9 +101,9 @@ describe('Test the playlists route', () => {
       }
 
       const res = await request(app)
-        .put("/api/v1/playlists/0")
+        .put("/api/v1/playlists/-1")
         .send(updatedPlaylist);
-        
+
       expect(res.statusCode).toBe(404)
       expect(res.body).toHaveProperty("error", "Unable to update playlist.");
       expect(res.body).toHaveProperty("detail", "A playlist with that id cannot be found");
