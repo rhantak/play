@@ -105,7 +105,7 @@ router.delete('/:id', (request, response) => {
         response.status(404).json({error: "No such playlist found. No deletion made."})
       }
     })
-    .catch((error) => response.status(500).json({ error: error }))
+    .catch((error) => response.status(500).json({ error: "Oops, something went wrong!" }))
 })
 
 module.exports = router;
