@@ -11,7 +11,6 @@ router.get('/', (request, response) => {
       response.status(200).send({data: result})
     })
     .catch(error => {
-      console.log(error)
       response.status(500).json({ error: "Oops, something went wrong!" });
     })
 })
@@ -72,7 +71,6 @@ database('playlists')
     }
   })
   .catch(error => {
-    console.log(error)
     response.status(500).json({ error: "Oops, something went wrong!" });
   })
 
@@ -96,7 +94,6 @@ database('playlists')
         }
       })
     .catch(error => {
-      console.log(error)
       response.status(500).json({ error: "Oops, something went wrong!" });
     })
 })
