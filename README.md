@@ -151,6 +151,37 @@ body:
 }
 ```
 
+
+##### PUT `/playlists/:id`
+Updates a playlist in the database by `id`.
+
+Required body of request:
+- JSON format
+- `title` attribute required
+
+Example request:
+```
+PUT /api/v1/playlists/3
+body:
+{
+  "title": "Morning Jams"
+}
+```
+
+Example success response:
+```
+status: 200
+
+body: 
+{
+  "id": 3,
+  "title": "Morning Jams",
+  "createdAt": 2019-11-26T16:03:43+00:00,
+  "updatedAt": 2019-11-26T16:03:43+00:00
+}
+```
+
+
 ### Schema Design
 
 <img width="189" alt="Screen Shot 2020-02-04 at 5 25 04 PM" src="https://user-images.githubusercontent.com/47759923/73799595-9a137900-4773-11ea-98e9-376aefb898a7.png">
