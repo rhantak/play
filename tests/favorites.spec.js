@@ -280,5 +280,21 @@ describe('Test the favorites route', () => {
       expect(res_2.body).toHaveProperty("error", "Unable to create favorite.")
       expect(res_2.body).toHaveProperty("detail", "That song is already favorited.")
     })
+
+    test('It returns a 503 error if MusixMatch is not responding', async()=>{
+      let newFav = {
+        title: "We will Rock You",
+        artistName: 'Queen'
+      }
+
+      await fetch.mockReject(new Error('new error message'))
+
+      const res = await request(app)
+        .post("/api/v1/favorites")
+        .send(newFav);
+
+      expect(res.statusCode).toBe(503);
+
+    })
   })
 });
