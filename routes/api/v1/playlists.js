@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+var playlistFavorites = require('./playlists/favorites')
+
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../../../knexfile')[environment];
 const database = require('knex')(configuration);
@@ -110,5 +112,11 @@ router.delete('/:id', (request, response) => {
       response.status(500).json({ error: "Oops, something went wrong!" })
     })
 })
+
+// The fix for our parameters problem
+router.use('/:playlistId/favorites', function(req, res, next) {
+  req.playlistId = req.params.playlistId;
+  next()
+}, playlistFavorites);
 
 module.exports = router;
