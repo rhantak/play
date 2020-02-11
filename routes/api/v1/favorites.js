@@ -14,7 +14,10 @@ async function fetchMusicData(info) {
     .then(result => {
         return result.message.body.track_list;
     })
-    .catch((error) => response.send(500).json({ error: error }))
+    .catch(error => {
+  console.log(error)
+  response.status(500).json({ error: "Oops, something went wrong!" })
+})
     return data;
 }
 
@@ -55,7 +58,10 @@ router.post('/', (request, response) => {
           })
       }
     })
-    .catch((error) => response.status(500).json({error: error}))
+    .catch(error => {
+  console.log(error)
+  response.status(500).json({ error: "Oops, something went wrong!" })
+})
 });
 
 router.get('/', (request, response) => {
@@ -64,7 +70,10 @@ router.get('/', (request, response) => {
     .then(result => {
       response.status(200).send({data: result})
     })
-    .catch((error) => response.status(500).json({ error: error }))
+    .catch(error => {
+      console.log(error)
+      response.status(500).json({ error: "Oops, something went wrong!" })
+    })
 })
 
 router.get('/:id', (request, response) =>{
@@ -78,7 +87,10 @@ router.get('/:id', (request, response) =>{
         return response.status(404).json({error: "No such favorite found"})
       }
     })
-    .catch((error) => response.status(500).json({error: error}))
+    .catch(error => {
+  console.log(error)
+  response.status(500).json({ error: "Oops, something went wrong!" })
+})
 });
 
 router.delete('/:id', (request, response) => {
@@ -92,7 +104,10 @@ router.delete('/:id', (request, response) => {
         response.status(404).json({error: "No such favorite found. No deletion made."})
       }
     })
-    .catch((error) => response.status(500).json({ error: error }))
+    .catch(error => {
+      console.log(error)
+      response.status(500).json({ error: "Oops, something went wrong!" })
+    })
 })
 
 module.exports = router;
