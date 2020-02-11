@@ -13,7 +13,7 @@ describe('Test the playlists route', () => {
     fetch.resetMocks();
   });
   afterEach(() => {
-    database.raw('truncate table favorites cascade');
+    database.raw('truncate table playlists cascade');
   });
 
   describe('POST playlists', () => {
