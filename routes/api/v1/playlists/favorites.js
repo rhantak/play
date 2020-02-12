@@ -17,13 +17,20 @@ playlistFavorites.post('/:favoriteId', (request, response) => {
   // check favoriteId is in favorite table
   checkIds(playlistId, favoriteId)
     .then(data =>{
-      success = {
+      // if both pass, then make new playlist_favorite
+      var success = {
         "Success": `${data.favorite_title} has been added to ${data.playlist_title}`
       }
-      response.status(201).json(success)
+      database('playlist_favorites').insert({
+        playlist_id: data.playlist_id,
+        favorite_id: data.favorite_id
+      }, 'id')
+      .then(result => {
+
+        response.status(201).json(success)
+      })
     })
 
-  // if both pass, then make new playlist_favorite
 })
 
 async function checkAndGetPlaylist(id){

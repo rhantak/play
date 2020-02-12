@@ -47,7 +47,6 @@ describe('Test the playlistFavorites route', () => {
       let favorite = await database('favorites').select('id').first()
         .then((firstFavorite) => firstFavorite)
 
-      console.log({playlist: playlist, favorite: favorite})
       const res = await request(app)
         .post(`/api/v1/playlists/${playlist.id}/favorites/${favorite.id}`)
 
