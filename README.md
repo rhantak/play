@@ -206,6 +206,16 @@ body:
 }
 ```
 
+##### DELETE `/playlists/:playlist_id/favorites/:favorite_id`
+Delete a favorite from a playlist.
+
+Example request: `DELETE /playlists/3/favorites/42`
+
+Example Success response:
+```
+Status: 204
+```
+
 ### Schema Design
 
 <img width="189" alt="Screen Shot 2020-02-04 at 5 25 04 PM" src="https://user-images.githubusercontent.com/47759923/73799595-9a137900-4773-11ea-98e9-376aefb898a7.png">
