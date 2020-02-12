@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var favorites = require('./playlists/favorites');
 
 var favorites = require('./playlists/favorites')
 
@@ -113,8 +114,8 @@ router.delete('/:id', (request, response) => {
     })
 })
 
-router.use('/:playlistId/favorites', function(req, res, next) {
-  req.playlistId = req.params.playlistId;
+router.use('/:playlist_id/favorites', function(request, response, next) {
+  request.playlist_id = request.params.playlist_id;
   next()
 }, favorites);
 

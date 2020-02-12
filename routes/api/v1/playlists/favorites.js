@@ -1,17 +1,19 @@
-const playlistFavorites = require('express').Router();
+var express = require('express');
+var router = express.Router();
+const Favorite = require("../../../../lib/models/favorite")
 
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../../../../knexfile')[environment];
 const database = require('knex')(configuration);
 
-playlistFavorites.get('/', (request, response) => {
+router.get('/', (request, response) => {
   let playlistId = request.playlistId;
   return response.send(`${playlistId} and ${info}`)
 })
 
-playlistFavorites.post('/:favoriteId', (request, response) => {
-  let playlistId = request.playlistId;
-  let favoriteId = request.params.favoriteId;
+router.post('/:favoriteId', (request, response) => {
+  let playlistId = request.playlist_id
+  let favoriteId = request.params.favorite_id
 
   // check playlistId is in playlist table
   // check favoriteId is in favorite table
@@ -32,6 +34,44 @@ playlistFavorites.post('/:favoriteId', (request, response) => {
     })
 
 })
+
+
+router.delete('/:favorite_id', (request, response) => {
+  let playlistId = request.playlist_id
+  let favoriteId = request.params.favorite_id
+
+  database('playlist_favorites').where({playlist_id: playlistId, favorite_id: favoriteId})
+    .del()
+    .then(result => {
+      if(result === 1){
+        response.status(204).send()
+      } else {
+        database('playlists').where({id: playlistId}).select()
+          .then((playlists) => playlists.length === 1)
+          .then(playlistExists => {
+            if(playlistExists){
+            response.status(404).send({"error": "No such favorite found. No deletion made."})
+          } else {
+            response.status(404).send({"error": "No such playlist found. No deletion made."})
+          }
+        })
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(500).json({ error: "Oops, something went wrong!" })
+    })
+})
+
+async function checkIds(playlistId, favoriteId) {
+  let playlist = await checkAndGetPlaylist(playlistId);
+  let favorite = await checkAndGetFavorite(favoriteId);
+  return {  playlist_id: playlist.id,
+            playlist_title: playlist.title,
+            favorite_id: favorite.id,
+            favorite_title: favorite.title
+         }
+}
 
 async function checkAndGetPlaylist(id){
   let data = await database('playlists')
@@ -73,16 +113,4 @@ async function checkAndGetFavorite(id){
   return data
 }
 
-async function checkIds(playlistId, favoriteId) {
-  let playlist = await checkAndGetPlaylist(playlistId);
-  let favorite = await checkAndGetFavorite(favoriteId);
-  return {  playlist_id: playlist.id,
-            playlist_title: playlist.title,
-            favorite_id: favorite.id,
-            favorite_title: favorite.title
-         }
-}
-
-
-
-module.exports = playlistFavorites;
+module.exports = router;
