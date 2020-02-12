@@ -28,8 +28,10 @@ router.post('/:favorite_id', (request, response) => {
         .then(result => {
           response.status(201).json(success)
         })
-      } else {
-        response.status(404).send(data)
+      } else if (data["errorStatus"] === 404){
+        response.status(404).json({error: data["error"], detail: data["detail"]})
+      } else if (data["errorStatus"] === 400){
+        response.status(400).json({error: data["error"], detail: data["detail"]})
       }
     })
 })
@@ -65,21 +67,32 @@ router.delete('/:favorite_id', (request, response) => {
 async function checkIds(playlistId, favoriteId) {
   let playlist = await checkAndGetPlaylist(playlistId);
   let favorite = await checkAndGetFavorite(favoriteId);
-  if (playlist && favorite){
-    return {  playlist_id: playlist.id,
-      playlist_title: playlist.title,
-      favorite_id: favorite.id,
-      favorite_title: favorite.title
+  let uniqueFavorite = await checkIfPlaylistHasFavorite(playlistId, favoriteId);
+  if (uniqueFavorite){
+    if (playlist && favorite){
+      return {  playlist_id: playlist.id,
+        playlist_title: playlist.title,
+        favorite_id: favorite.id,
+        favorite_title: favorite.title
+      }
+    } else if (playlist == undefined){
+      return {
+        "errorStatus": 404,
+        "error": "Unable to add favorite to playlist.",
+        "detail": "A playlist with that id cannot be found"
+      }
+    } else if (favorite === undefined){
+      return {
+        "errorStatus": 404,
+        "error": "Unable to add favorite to playlist.",
+        "detail": "A favorite with that id cannot be found"
+      }
     }
-  } else if (playlist == undefined){
+  } else {
     return {
-      "error": "Unable to update playlist.",
-      "detail": "A playlist with that id cannot be found"
-    }
-  } else if (favorite === undefined){
-    return {
-      "error": "Unable to update playlist.",
-      "detail": "A favorite with that id cannot be found"
+      "errorStatus": 400,
+      "error": "Unable to add favorite to playlist.",
+      "detail": "That song is already on this playlist."
     }
   }
 }
@@ -112,6 +125,24 @@ async function checkAndGetFavorite(id){
       response.status(500).json({ error: "Oops, something went wrong!" })
     })
   return data
+}
+
+async function checkIfPlaylistHasFavorite(playlistId, favoriteId) {
+  let isUnique = await database('playlist_favorites')
+    .where({playlist_id: playlistId, favorite_id: favoriteId})
+    .select()
+    .then(results => {
+      if (results.length > 0){
+        return false
+      } else {
+        return true
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(500).json({ error: "Oops, something went wrong!" })
+    })
+  return isUnique
 }
 
 module.exports = router;

@@ -68,7 +68,7 @@ describe('Test the playlistFavorites route', () => {
         .post(`/api/v1/playlists/${0}/favorites/${favorite.id}`)
 
       expect(res.statusCode).toBe(404)
-      expect(res.body).toHaveProperty("error", "Unable to update playlist.");
+      expect(res.body).toHaveProperty("error", "Unable to add favorite to playlist.");
       expect(res.body).toHaveProperty("detail", "A playlist with that id cannot be found");
     })
 
@@ -80,7 +80,7 @@ describe('Test the playlistFavorites route', () => {
         .post(`/api/v1/playlists/${playlist.id}/favorites/${0}`)
 
       expect(res.statusCode).toBe(404)
-      expect(res.body).toHaveProperty("error", "Unable to update playlist.");
+      expect(res.body).toHaveProperty("error", "Unable to add favorite to playlist.");
       expect(res.body).toHaveProperty("detail", "A favorite with that id cannot be found");
     })
 
@@ -90,8 +90,28 @@ describe('Test the playlistFavorites route', () => {
         .post(`/api/v1/playlists/${0}/favorites/${0}`)
 
       expect(res.statusCode).toBe(404)
-      expect(res.body).toHaveProperty("error", "Unable to update playlist.");
+      expect(res.body).toHaveProperty("error", "Unable to add favorite to playlist.");
       expect(res.body).toHaveProperty("detail", "A playlist with that id cannot be found");
+    })
+
+    test('It does not allow duplicate favorites to be added to a playlist', async () => {
+      let playlist = await database('playlists').select('id').first()
+        .then((firstPlaylist) => firstPlaylist)
+      let favorite = await database('favorites').select('id').first()
+        .then((firstFavorite) => firstFavorite)
+
+      await database('playlist_favorites').insert({playlist_id: playlist.id, favorite_id: favorite.id})
+      let allPlaylistFavorites = await database('playlist_favorites').select().then(results=>results.length)
+
+      const res = await request(app)
+        .post(`/api/v1/playlists/${playlist.id}/favorites/${favorite.id}`)
+
+      expect(res.statusCode).toBe(400);
+      expect(res.body).toHaveProperty("error", "Unable to add favorite to playlist.");
+      expect(res.body).toHaveProperty("detail", "That song is already on this playlist.");
+
+      let newPlaylistFavoritesCount = await database('playlist_favorites').select().then(results=>results.length)
+      expect(newPlaylistFavoritesCount).toBe(allPlaylistFavorites)
     })
 
   })
