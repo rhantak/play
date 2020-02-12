@@ -64,6 +64,36 @@ router.delete('/:favorite_id', (request, response) => {
     })
 })
 
+router.get('/', (request, response) => {
+  let playlistId = request.playlist_id
+
+  database('playlists').where({id: playlistId}).select()
+    .then(targetPlaylist =>{
+      if(targetPlaylist.length) {
+        database('playlist_favorites').where({playlist_id: request.playlist_id}).pluck('favorite_id')
+        .then((fave_ids) => {
+          database('favorites').whereIn('id', fave_ids).select()
+          .then((faves) => {
+            database('favorites').whereIn('id', fave_ids).avg('rating')
+              .then(avgRating => {
+                response.status(200).json({
+                  id: targetPlaylist[0].id,
+                  title: targetPlaylist[0].title,
+                  songCount: faves.length,
+                  songAvgRating: parseInt(avgRating[0].avg, 10),
+                  favorites: faves,
+                  createdAt: targetPlaylist[0].created_at,
+                  updatedAt: targetPlaylist[0].updated_at
+                })
+              })
+          })
+        })
+      } else {
+        response.status(404).send({"error": "No playlist found with that id."})
+      }}
+    )
+})
+
 async function checkIds(playlistId, favoriteId) {
   let playlist = await checkAndGetPlaylist(playlistId);
   let favorite = await checkAndGetFavorite(favoriteId);
