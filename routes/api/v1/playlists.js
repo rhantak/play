@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var favorites = require('./playlists/favorites');
 
 const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../../../knexfile')[environment];
@@ -110,5 +111,10 @@ router.delete('/:id', (request, response) => {
       response.status(500).json({ error: "Oops, something went wrong!" })
     })
 })
+
+router.use('/:playlist_id/favorites', function(request, response, next) {
+  request.playlist_id = request.params.playlist_id;
+  next()
+}, favorites);
 
 module.exports = router;
