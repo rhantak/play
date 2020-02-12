@@ -16,19 +16,22 @@ router.post('/:favorite_id', (request, response) => {
   checkIds(playlistId, favoriteId)
     .then(data =>{
       // if both pass, then make new playlist_favorite
-      var success = {
-        "Success": `${data.favorite_title} has been added to ${data.playlist_title}`
-      }
-      database('playlist_favorites')
+      if (data["playlist_id"] && data["favorite_id"]){
+        var success = {
+          "Success": `${data.favorite_title} has been added to ${data.playlist_title}`
+        }
+        database('playlist_favorites')
         .insert({
-                  playlist_id: data.playlist_id,
-                  favorite_id: data.favorite_id
-                }, 'id')
-      .then(result => {
-        response.status(201).json(success)
-      })
+          playlist_id: data.playlist_id,
+          favorite_id: data.favorite_id
+        }, 'id')
+        .then(result => {
+          response.status(201).json(success)
+        })
+      } else {
+        response.status(404).send(data)
+      }
     })
-
 })
 
 
@@ -62,11 +65,23 @@ router.delete('/:favorite_id', (request, response) => {
 async function checkIds(playlistId, favoriteId) {
   let playlist = await checkAndGetPlaylist(playlistId);
   let favorite = await checkAndGetFavorite(favoriteId);
-  return {  playlist_id: playlist.id,
-            playlist_title: playlist.title,
-            favorite_id: favorite.id,
-            favorite_title: favorite.title
-         }
+  if (playlist && favorite){
+    return {  playlist_id: playlist.id,
+      playlist_title: playlist.title,
+      favorite_id: favorite.id,
+      favorite_title: favorite.title
+    }
+  } else if (playlist == undefined){
+    return {
+      "error": "Unable to update playlist.",
+      "detail": "A playlist with that id cannot be found"
+    }
+  } else if (favorite === undefined){
+    return {
+      "error": "Unable to update playlist.",
+      "detail": "A favorite with that id cannot be found"
+    }
+  }
 }
 
 async function checkAndGetPlaylist(id){
@@ -75,11 +90,6 @@ async function checkAndGetPlaylist(id){
     .then(results => {
       if (results.length > 0){
         return results[0]
-      } else {
-        return response.status(404).send({
-          "error" : "Unable to add favorite to playlist.",
-          "detail" : `Could not find a playlist with id ${id}.`
-        })
       }
     })
     .catch(error => {
@@ -95,11 +105,6 @@ async function checkAndGetFavorite(id){
     .then(results => {
       if (results.length > 0){
         return results[0]
-      } else {
-        return response.status(404).send({
-          "error" : "Unable to add favorite to playlist.",
-          "detail" : `Could not find a favorite with id ${id}.`
-        })
       }
     })
     .catch(error => {
