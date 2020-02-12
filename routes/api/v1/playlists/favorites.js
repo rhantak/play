@@ -6,12 +6,8 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('../../../../knexfile')[environment];
 const database = require('knex')(configuration);
 
-router.get('/', (request, response) => {
-  let playlistId = request.playlistId;
-  return response.send(`${playlistId} and ${info}`)
-})
 
-router.post('/:favoriteId', (request, response) => {
+router.post('/:favorite_id', (request, response) => {
   let playlistId = request.playlist_id
   let favoriteId = request.params.favorite_id
 
@@ -23,12 +19,12 @@ router.post('/:favoriteId', (request, response) => {
       var success = {
         "Success": `${data.favorite_title} has been added to ${data.playlist_title}`
       }
-      database('playlist_favorites').insert({
-        playlist_id: data.playlist_id,
-        favorite_id: data.favorite_id
-      }, 'id')
+      database('playlist_favorites')
+        .insert({
+                  playlist_id: data.playlist_id,
+                  favorite_id: data.favorite_id
+                }, 'id')
       .then(result => {
-
         response.status(201).json(success)
       })
     })
