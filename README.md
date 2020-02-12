@@ -142,7 +142,7 @@ Example success response:
 ```
 status: 201
 
-body: 
+body:
 {
   "id": 1,
   "title": "Cleaning House",
@@ -172,7 +172,7 @@ Example success response:
 ```
 status: 200
 
-body: 
+body:
 {
   "id": 3,
   "title": "Morning Jams",
@@ -191,6 +191,20 @@ Example success response:
 status: 204
 ```
 
+##### POST `/playlists/:playlist_id/favorites/:favorite_id`
+Adds a favorite to a playlist
+
+Example request: `POST /api/v1/playlists/1/favorites/1`
+
+Example success response:
+```
+status: 201
+
+body:
+{
+  "Success": "We Will Rock You has been added to Cleaning House!"
+}
+```
 
 ### Schema Design
 

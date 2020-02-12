@@ -15,10 +15,10 @@ async function fetchMusicData(info) {
         return result.message.body.track_list;
     })
     .catch(error => {
-  console.log(error)
-  response.status(500).json({ error: "Oops, something went wrong!" })
-})
-    return data;
+      console.log(error)
+      response.status(500).json({ error: "Oops, something went wrong!" })
+    })
+  return data;
 }
 
 router.post('/', (request, response) => {
