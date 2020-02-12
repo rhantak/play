@@ -60,5 +60,29 @@ describe('Test the playlistFavorites route', () => {
       expect(playlistFavorites[0].favorite_id).toBe(favorite.id)
 
     })
+    test.only('It should return a 404 if playlist not found', async ()=>{
+      let favorite = await database('favorites').select('id').first()
+        .then((firstFavorite) => firstFavorite)
+
+      const res = await request(app)
+        .post(`/api/v1/playlists/${0}/favorites/${favorite.id}`)
+
+      expect(res.statusCode).toBe(404)
+      expect(res.body).toHaveProperty("error", "Unable to update playlist.");
+      expect(res.body).toHaveProperty("detail", "A playlist with that id cannot be found");
+    })
+
+    test('It should return a 404 if favorite not found', async ()=>{
+      let playlist = await database('playlists').select('id').first()
+        .then((firstPlaylist) => firstPlaylist)
+
+      const res = await request(app)
+        .post(`/api/v1/playlists/${playlist.id}/favorites/${0}`)
+
+      expect(res.statusCode).toBe(404)
+      expect(res.body).toHaveProperty("error", "Unable to update playlist.");
+      expect(res.body).toHaveProperty("detail", "A favorite with that id cannot be found");
+    })
+
   })
 });
