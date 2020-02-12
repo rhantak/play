@@ -18,7 +18,7 @@ router.post('/:favorite_id', (request, response) => {
       // if both pass, then make new playlist_favorite
       if (data["playlist_id"] && data["favorite_id"]){
         var success = {
-          "Success": `${data.favorite_title} has been added to ${data.playlist_title}`
+          "Success": `${data.favorite_title} has been added to ${data.playlist_title}!`
         }
         database('playlist_favorites')
         .insert({

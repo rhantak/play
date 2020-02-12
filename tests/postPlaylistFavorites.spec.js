@@ -52,7 +52,7 @@ describe('Test the playlistFavorites route', () => {
 
 
       expect(res.statusCode).toBe(201);
-      expect(res.body).toHaveProperty("Success", "We Will Rock You has been added to A Knight's Tale Soundtrack");
+      expect(res.body).toHaveProperty("Success", "We Will Rock You has been added to A Knight's Tale Soundtrack!");
 
       playlistFavorites = await database('playlist_favorites').select()
       expect(playlistFavorites.length).toBe(1)
