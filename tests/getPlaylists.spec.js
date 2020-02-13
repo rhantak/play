@@ -65,7 +65,7 @@ describe('Test the playlists route', () => {
       }]
       let inserted = await database('playlist_favorites').insert(playlistFaves, 'id').then((result)=>result);
       console.log(inserted)
-      
+
       const res = await request(app)
         .get("/api/v1/playlists")
 
@@ -79,6 +79,15 @@ describe('Test the playlists route', () => {
       expect(res.body.data[0]).toHaveProperty("songCount");
       expect(res.body.data[0]).toHaveProperty("songAvgRating");
       expect(res.body.data[0]).toHaveProperty("favorites");
+
+      expect(res.body.data[0].favorites[0]).toHaveProperty("title", "We Will Rock You");
+      expect(res.body.data[0].favorites[0]).toHaveProperty("artistName", "Queen");
+      expect(res.body.data[0].favorites[0]).toHaveProperty("genre", "Rock");
+      expect(res.body.data[0].favorites[0]).toHaveProperty("rating", 82);
+
+      expect(res.body.data[0].favorites[1]).toHaveProperty("title", "Low Rider");
+      expect(res.body.data[0].favorites[2]).toHaveProperty("title", "The Boys Are Back In Town");
+
 
       expect(res.body.data[1]).toHaveProperty("title", "Keep Walking");
       expect(res.body.data[1]).toHaveProperty("id");

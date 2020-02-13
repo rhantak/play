@@ -21,10 +21,6 @@ router.get('/', (request, response) => {
     .leftJoin('playlist_favorites', 'playlists.id', 'playlist_favorites.playlist_id')
     .leftJoin('favorites', 'playlist_favorites.favorite_id', 'favorites.id')
     .groupBy('playlists.id')
-  // database('playlists')
-  //   .select(
-  //     database.raw("row_to_json(playlists)")
-  //   )
     .then(result => {
       console.log(result)
       response.status(200).send({data: result})
