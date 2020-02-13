@@ -78,7 +78,7 @@ router.get('/', (request, response) => {
 
 router.get('/:id', (request, response) =>{
   database('favorites')
-    .where(request.params)
+    .where('id', request.params.id)
     .select('id', 'title', 'artistName', 'genre', 'rating')
     .then(favorites => {
       if(favorites.length > 0 ){
@@ -95,7 +95,7 @@ router.get('/:id', (request, response) =>{
 
 router.delete('/:id', (request, response) => {
   database('favorites')
-    .where(request.params)
+    .where('id', request.params.id)
     .del()
     .then(result => {
       if(result === 1){

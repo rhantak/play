@@ -62,7 +62,8 @@ router.post('/', (request, response) => {
 
 router.put('/:id', (request, response) => {
   const info = request.body;
-  const id = request.params;
+  const id = request.params.id;
+  console.log(id)
 // check parameters of body
   for (let requiredParameter of ["title"]) {
     if(!info[requiredParameter]) {
@@ -74,7 +75,7 @@ router.put('/:id', (request, response) => {
 
 // check id is in db
 database('playlists')
-  .where(id)
+  .where('id', id)
   .select()
   .then(results => {
     if(results.length > 0 && info.title){
@@ -89,7 +90,7 @@ database('playlists')
         } else {
           // update db
           database('playlists')
-          .where(id)
+          .where('id', id)
           .update(info, ["id", "title", "created_at as createdAt", "updated_at as updatedAt"])
           .then(updated => {
             return response.status(200).send(updated[0])
@@ -111,7 +112,7 @@ database('playlists')
 
 router.delete('/:id', (request, response) => {
   database('playlists')
-    .where(request.params)
+    .where('id', request.params.id)
     .del()
     .then(result => {
       if(result === 1){
