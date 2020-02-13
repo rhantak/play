@@ -64,6 +64,54 @@ router.delete('/:favorite_id', (request, response) => {
     })
 })
 
+router.get('/', (request, response) => {
+  let playlistId = request.playlist_id
+
+  database('playlists').where({id: playlistId}).select()
+    .then(targetPlaylist =>{
+      if(targetPlaylist.length) {
+        findFaveIds(playlistId)
+        .then((faveIds) => findFaves(faveIds)
+        .then((faves) => avgRating(faveIds)
+        .then(avgRating => {
+          response.status(200).json({
+            id: targetPlaylist[0].id,
+            title: targetPlaylist[0].title,
+            songCount: faves.length,
+            songAvgRating: avgRating,
+            favorites: faves,
+            createdAt: targetPlaylist[0].created_at,
+            updatedAt: targetPlaylist[0].updated_at
+          })
+        })
+        )
+        )
+      } else {
+        response.status(404).send({"error": "No playlist found with that id."})
+      }}
+    )
+})
+
+async function findFaveIds(playlistId) {
+  let faveIds = await database('playlist_favorites').where({playlist_id: playlistId}).pluck('favorite_id')
+
+  return faveIds;
+}
+
+async function findFaves(faveIds) {
+  let faves = await database('favorites').whereIn('id', faveIds).select(['id', 'title', 'artistName', 'genre', 'rating'])
+
+  return faves;
+}
+
+async function avgRating(faveIds) {
+  let avgRating = await database('favorites').whereIn('id', faveIds).avg('rating')
+
+  let roundedRating = parseInt(avgRating[0].avg, 10)
+
+  return roundedRating;
+}
+
 async function checkIds(playlistId, favoriteId) {
   let playlist = await checkAndGetPlaylist(playlistId);
   let favorite = await checkAndGetFavorite(favoriteId);
