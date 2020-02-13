@@ -70,29 +70,47 @@ router.get('/', (request, response) => {
   database('playlists').where({id: playlistId}).select()
     .then(targetPlaylist =>{
       if(targetPlaylist.length) {
-        database('playlist_favorites').where({playlist_id: request.playlist_id}).pluck('favorite_id')
-        .then((fave_ids) => {
-          database('favorites').whereIn('id', fave_ids).select()
-          .then((faves) => {
-            database('favorites').whereIn('id', fave_ids).avg('rating')
-              .then(avgRating => {
-                response.status(200).json({
-                  id: targetPlaylist[0].id,
-                  title: targetPlaylist[0].title,
-                  songCount: faves.length,
-                  songAvgRating: parseInt(avgRating[0].avg, 10),
-                  favorites: faves,
-                  createdAt: targetPlaylist[0].created_at,
-                  updatedAt: targetPlaylist[0].updated_at
-                })
-              })
+        findFaveIds(playlistId)
+        .then((faveIds) => findFaves(faveIds)
+        .then((faves) => avgRating(faveIds)
+        .then(avgRating => {
+          response.status(200).json({
+            id: targetPlaylist[0].id,
+            title: targetPlaylist[0].title,
+            songCount: faves.length,
+            songAvgRating: avgRating,
+            favorites: faves,
+            createdAt: targetPlaylist[0].created_at,
+            updatedAt: targetPlaylist[0].updated_at
           })
         })
+        )
+        )
       } else {
         response.status(404).send({"error": "No playlist found with that id."})
       }}
     )
 })
+
+async function findFaveIds(playlistId) {
+  let faveIds = await database('playlist_favorites').where({playlist_id: playlistId}).pluck('favorite_id')
+
+  return faveIds;
+}
+
+async function findFaves(faveIds) {
+  let faves = await database('favorites').whereIn('id', faveIds).select()
+
+  return faves;
+}
+
+async function avgRating(faveIds) {
+  let avgRating = await database('favorites').whereIn('id', faveIds).avg('rating')
+
+  let roundedRating = parseInt(avgRating[0].avg, 10)
+
+  return roundedRating;
+}
 
 async function checkIds(playlistId, favoriteId) {
   let playlist = await checkAndGetPlaylist(playlistId);
