@@ -77,7 +77,7 @@ describe('Test the playlists route', () => {
       expect(res.body.data[0]).toHaveProperty("id");
       expect(res.body.data[0]).toHaveProperty("createdAt");
       expect(res.body.data[0]).toHaveProperty("updatedAt");
-      expect(res.body.data[0]).toHaveProperty("songCount");
+      expect(res.body.data[0]).toHaveProperty("songCount", "3");
       expect(res.body.data[0]).toHaveProperty("songAvgRating");
       expect(res.body.data[0]).toHaveProperty("favorites");
 
@@ -97,6 +97,9 @@ describe('Test the playlists route', () => {
       expect(res.body.data[1]).toHaveProperty("songCount");
       expect(res.body.data[1]).toHaveProperty("songAvgRating");
       expect(res.body.data[1]).toHaveProperty("favorites");
+
+      expect(res.body.data[1]).toHaveProperty("songCount", "0");
+      expect(res.body.data[1]).toHaveProperty("songAvgRating", "0");
 
     });
 

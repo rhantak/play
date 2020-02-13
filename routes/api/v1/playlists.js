@@ -9,17 +9,17 @@ const configuration = require('../../../knexfile')[environment];
 const database = require('knex')(configuration);
 
 router.get('/', (request, response) => {
-  database('playlists')
-    .select("playlists.id",
-            "playlists.title",
+  database('favorites')
+    .select('playlists.id',
+            'playlists.title',
+            database.raw('COALESCE(COUNT (favorites), 0) as "songCount"'),
+            database.raw('COALESCE(AVG (favorites.rating), 0) as "songAvgRating"'),
             database.raw("ARRAY_AGG (row_to_json(favorites)) favorites")
-          )
-    .sum({ songCount: 'favorites.id' })
-    .avg({ songAvgRating: 'favorites.rating' })
+    )
     .select("playlists.created_at as createdAt",
             "playlists.updated_at as updatedAt")
-    .leftJoin('playlist_favorites', 'playlists.id', 'playlist_favorites.playlist_id')
-    .leftJoin('favorites', 'playlist_favorites.favorite_id', 'favorites.id')
+    .join('playlist_favorites', 'favorites.id', 'playlist_favorites.favorite_id')
+    .rightJoin('playlists', 'playlist_favorites.playlist_id', 'playlists.id')
     .groupBy('playlists.id')
     .then(result => {
       console.log(result)
