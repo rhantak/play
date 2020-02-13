@@ -275,7 +275,7 @@ body:
 
 ### Schema Design
 
-<img width="189" alt="Screen Shot 2020-02-04 at 5 25 04 PM" src="https://user-images.githubusercontent.com/47759923/73799595-9a137900-4773-11ea-98e9-376aefb898a7.png">
+<img width="805" alt="play_schema_02_2020" src="https://user-images.githubusercontent.com/26877629/74453242-5db0de80-4e3f-11ea-9da5-4becbb8081eb.png">
 
 ### Tech Stack List
 - PostgreSQL (database)
