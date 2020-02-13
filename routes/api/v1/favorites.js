@@ -16,7 +16,7 @@ async function fetchMusicData(info) {
     })
     .catch(error => {
       console.log(error)
-      response.status(500).json({ error: "Oops, something went wrong!" })
+      return response.status(503).json({ error: "Oops, something went wrong with MusixMatch!" })
     })
   return data;
 }
