@@ -28,6 +28,44 @@ describe('Test the playlists route', () => {
 
       await database('playlists').insert(playlistsArray, ['id', 'title']);
 
+      let favoritesArray = [{
+        title: 'We Will Rock You',
+        artistName: 'Queen',
+        genre: 'Rock',
+        rating: 82
+      },
+      {
+        title: 'Low Rider',
+        artistName: 'War',
+        genre: 'Funk',
+        rating: 72
+      },
+      {
+        title: 'The Boys Are Back In Town',
+        artistName: 'Thin Lizzy',
+        genre: 'Rock',
+        rating: 90
+      }];
+
+      await database('favorites').insert(favoritesArray, ['id', 'title']);
+
+      let faveIds = await database('favorites').pluck('id')
+
+      let playlistId = await database('playlists').select('id').first()
+      .then((firstPlaylist) => firstPlaylist.id)
+
+      let playlistFaves = [{
+        playlist_id: playlistId, favorite_id: faveIds[0]
+      },
+      {
+        playlist_id: playlistId, favorite_id: faveIds[1]
+      },
+      {
+        playlist_id: playlistId, favorite_id: faveIds[2]
+      }]
+      let inserted = await database('playlist_favorites').insert(playlistFaves, 'id').then((result)=>result);
+      console.log(inserted)
+
       const res = await request(app)
         .get("/api/v1/playlists")
 
@@ -38,15 +76,31 @@ describe('Test the playlists route', () => {
       expect(res.body.data[0]).toHaveProperty("id");
       expect(res.body.data[0]).toHaveProperty("createdAt");
       expect(res.body.data[0]).toHaveProperty("updatedAt");
+      expect(res.body.data[0]).toHaveProperty("songCount");
+      expect(res.body.data[0]).toHaveProperty("songAvgRating");
+      expect(res.body.data[0]).toHaveProperty("favorites");
+
+      expect(res.body.data[0].favorites[0]).toHaveProperty("title", "We Will Rock You");
+      expect(res.body.data[0].favorites[0]).toHaveProperty("artistName", "Queen");
+      expect(res.body.data[0].favorites[0]).toHaveProperty("genre", "Rock");
+      expect(res.body.data[0].favorites[0]).toHaveProperty("rating", 82);
+
+      expect(res.body.data[0].favorites[1]).toHaveProperty("title", "Low Rider");
+      expect(res.body.data[0].favorites[2]).toHaveProperty("title", "The Boys Are Back In Town");
+
 
       expect(res.body.data[1]).toHaveProperty("title", "Keep Walking");
       expect(res.body.data[1]).toHaveProperty("id");
       expect(res.body.data[1]).toHaveProperty("createdAt");
       expect(res.body.data[1]).toHaveProperty("updatedAt");
+      expect(res.body.data[1]).toHaveProperty("songCount");
+      expect(res.body.data[1]).toHaveProperty("songAvgRating");
+      expect(res.body.data[1]).toHaveProperty("favorites");
 
     });
 
     test("It should respond with an empty array when no playlists present", async() => {
+
       const res = await request(app)
         .get("/api/v1/playlists")
 
