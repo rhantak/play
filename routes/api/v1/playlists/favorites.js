@@ -99,7 +99,7 @@ async function findFaveIds(playlistId) {
 }
 
 async function findFaves(faveIds) {
-  let faves = await database('favorites').whereIn('id', faveIds).select()
+  let faves = await database('favorites').whereIn('id', faveIds).select(['id', 'title', 'artistName', 'genre', 'rating'])
 
   return faves;
 }
